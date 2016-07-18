@@ -19,7 +19,7 @@ const Directories = {
 const Sources = {
   Scripts: `${Directories.Source}/js/**/*.js`,
   Styles: `${Directories.Source}/styles/**/*.scss`,
-  Html: `${Directories.Source}/html/**/*.html`,
+  Static: `${Directories.Source}/static/**/*`,
 };
 
 const bundler = browserify(`${Directories.Source}/js/app.js`, {debug: true})
@@ -35,8 +35,8 @@ gulp.task('browserify-js', function() {
     .pipe(gulp.dest(destination));
 });
 
-gulp.task('copy-html', () => {
-  return gulp.src(Sources.Html)
+gulp.task('copy-static', () => {
+  return gulp.src(Sources.Static)
     .pipe(gulp.dest(Directories.Build));
 });
 
@@ -54,7 +54,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('build', function(callback) {
-  runSequence('clean', ['browserify-js', 'sass', 'copy-html'], callback);
+  runSequence('clean', ['browserify-js', 'sass', 'copy-static'], callback);
 });
 
 gulp.task('serve', ['build'], () => {
@@ -70,9 +70,10 @@ gulp.task('serve', ['build'], () => {
 
   gulp.watch(Sources.Styles, ['sass']);
   gulp.watch(Sources.Scripts, ['browserify-js']);
-  gulp.watch(Sources.Html, ['copy-html']);
+  gulp.watch(Sources.Static, ['copy-static']);
   gulp.watch([
     `${Directories.Build}/**/*.html`,
+    `${Directories.Build}/**/*.json`,
     `${Directories.Build}/**/*.js`
   ]).on('change', browserSync.reload);
 });
